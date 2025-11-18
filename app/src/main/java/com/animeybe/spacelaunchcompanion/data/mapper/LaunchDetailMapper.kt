@@ -7,10 +7,10 @@ object LaunchDetailMapper {
 
     fun dtoToDomain(dto: LaunchDetailDto): LaunchDetail {
         return LaunchDetail(
-            id = dto.id ?: "unknown",
-            name = dto.name ?: "Unnamed Launch",
+            id = dto.id,
+            name = dto.name,
             status = LaunchStatus(
-                name = dto.status.name ?: "Unknown",
+                name = dto.status.name,
                 description = dto.status.description
             ),
             launchServiceProvider = dto.launchServiceProvider?.let { mapLaunchServiceProvider(it) }
@@ -18,9 +18,9 @@ object LaunchDetailMapper {
             mission = dto.mission?.let { mapMissionDetail(it) },
             rocket = dto.rocket?.let { mapRocketDetail(it) },
             pad = mapPadDetail(dto.pad),
-            windowStart = dto.windowStart ?: "",
-            windowEnd = dto.windowEnd ?: "",
-            net = dto.net ?: "",
+            windowStart = dto.windowStart,
+            windowEnd = dto.windowEnd,
+            net = dto.net,
             image = dto.image,
             infographic = dto.infographic,
             program = dto.program?.map { mapProgram(it) },
@@ -45,8 +45,8 @@ object LaunchDetailMapper {
 
     private fun mapMissionDetail(dto: MissionDetailDto): MissionDetail {
         return MissionDetail(
-            id = dto.id ?: 0,
-            name = dto.name ?: "Unknown Mission",
+            id = dto.id,
+            name = dto.name,
             description = dto.description,
             type = dto.type,
             orbit = dto.orbit?.let { mapOrbit(it) },

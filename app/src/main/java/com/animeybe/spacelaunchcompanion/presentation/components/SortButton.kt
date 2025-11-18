@@ -20,13 +20,13 @@ fun SortButton(
     FloatingActionButton(
         onClick = onClick,
         modifier = modifier.size(56.dp),
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.primary
     ) {
         Icon(
             imageVector = Icons.Default.Menu,
             contentDescription = getSortButtonDescription(sortType),
-            tint = MaterialTheme.colorScheme.onPrimary
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }

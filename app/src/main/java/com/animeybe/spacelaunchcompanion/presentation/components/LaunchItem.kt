@@ -121,7 +121,7 @@ fun LaunchItem(
                     text = "📅 ${formatLaunchDate(launch.net)}",
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }

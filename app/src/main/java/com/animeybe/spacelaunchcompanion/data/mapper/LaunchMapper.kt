@@ -9,20 +9,19 @@ import com.animeybe.spacelaunchcompanion.domain.model.Pad
 import com.animeybe.spacelaunchcompanion.domain.model.Rocket
 import com.animeybe.spacelaunchcompanion.domain.model.RocketConfiguration
 
-// Разделение классов описанных в слое бизнес-логики и DTO
 object LaunchMapper {
     fun dtoToDomain(dto: LaunchDto): Launch {
         return Launch(
             id = dto.id,
             name = dto.name,
             status = LaunchStatus(
-                name = dto.status.name ?: "Unknown", // Защита от null
-                description = dto.status.description // Теперь может быть null
+                name = dto.status.name,
+                description = dto.status.description
             ),
             launchServiceProvider = dto.launchServiceProvider?.name ?: "Unknown Provider",
             mission = dto.mission?.let { missionDto ->
                 Mission(
-                    name = missionDto.name ?: "Unknown Mission",
+                    name = missionDto.name,
                     description = missionDto.description,
                     type = missionDto.type
                 )
@@ -30,17 +29,17 @@ object LaunchMapper {
             rocket = dto.rocket?.let { rocketDto ->
                 Rocket(
                     configuration = RocketConfiguration(
-                        name = rocketDto.configuration.name ?: "Unknown Rocket",
+                        name = rocketDto.configuration.name,
                         family = rocketDto.configuration.family,
                         variant = rocketDto.configuration.variant
                     )
                 )
             },
             pad = Pad(
-                name = dto.pad.name ?: "Unknown Pad",
+                name = dto.pad.name,
                 location = Location(
-                    name = dto.pad.location.name ?: "Unknown Location",
-                    country = dto.pad.location.countryCode ?: "Unknown"
+                    name = dto.pad.location.name,
+                    country = dto.pad.location.countryCode
                 )
             ),
             net = dto.net,

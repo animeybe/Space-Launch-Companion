@@ -18,6 +18,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.unit.dp
 import com.animeybe.spacelaunchcompanion.presentation.state.SortType
 
@@ -25,14 +27,15 @@ import com.animeybe.spacelaunchcompanion.presentation.state.SortType
 fun SortDialog(
     currentSort: SortType,
     onSortSelected: (SortType) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
                 text = "Сортировка запусков",
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.secondary
             )
         },
         text = {
@@ -41,16 +44,16 @@ fun SortDialog(
                     SortOptionItem(
                         sortType = sortType,
                         isSelected = currentSort == sortType,
-                        onSelected = { onSortSelected(sortType) }
+                        onSelected = { onSortSelected(sortType) },
                     )
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Готово")
+                Text("Готово", color = MaterialTheme.colorScheme.secondary)
             }
-        }
+        },
     )
 }
 
@@ -58,7 +61,7 @@ fun SortDialog(
 private fun SortOptionItem(
     sortType: SortType,
     isSelected: Boolean,
-    onSelected: () -> Unit
+    onSelected: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -80,7 +83,7 @@ private fun SortOptionItem(
                 text = getSortTypeDisplayName(sortType),
                 style = MaterialTheme.typography.bodyMedium,
                 color = if (isSelected) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.onSurface
+                else MaterialTheme.colorScheme.secondary
             )
         }
 
@@ -96,8 +99,8 @@ private fun SortOptionItem(
 
 private fun getSortTypeDisplayName(sortType: SortType): String {
     return when (sortType) {
-        SortType.DATE_ASC -> "📅 Дата (сначала старые)"
-        SortType.DATE_DESC -> "📅 Дата (сначала новые)"
+        SortType.DATE_ASC -> "📅 Дата (По возрастанию)"
+        SortType.DATE_DESC -> "📅 Дата (По убыванию)"
         SortType.NAME_ASC -> "🔤 Название (А-Я)"
         SortType.NAME_DESC -> "🔤 Название (Я-А)"
         SortType.AGENCY -> "🏢 Агентство"

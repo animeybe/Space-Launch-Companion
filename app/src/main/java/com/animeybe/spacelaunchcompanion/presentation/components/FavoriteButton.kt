@@ -20,7 +20,7 @@ fun FavoriteButton(
     Icon(
         imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
         contentDescription = if (isFavorite) "Удалить из избранного" else "Добавить в избранное",
-        tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+        tint = if (isFavorite) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
         modifier = modifier
             .size(24.dp)
             .clickable { onToggle() }
