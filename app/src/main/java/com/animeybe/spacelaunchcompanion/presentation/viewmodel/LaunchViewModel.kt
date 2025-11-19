@@ -3,6 +3,7 @@ package com.animeybe.spacelaunchcompanion.presentation.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.animeybe.spacelaunchcompanion.domain.repository.LaunchRepository
 import com.animeybe.spacelaunchcompanion.domain.usecase.*
 import com.animeybe.spacelaunchcompanion.presentation.state.LaunchState
 import com.animeybe.spacelaunchcompanion.presentation.state.SortState
@@ -17,7 +18,8 @@ class LaunchViewModel(
     private val addToFavoritesUseCase: AddToFavoritesUseCase,
     private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
     private val checkIsFavoriteUseCase: CheckIsFavoriteUseCase,
-    private val getFavoriteLaunchesUseCase: GetFavoriteLaunchesUseCase
+    private val getFavoriteLaunchesUseCase: GetFavoriteLaunchesUseCase,
+    private val repository: LaunchRepository // Добавляем репозиторий для очистки кэша
 ) : ViewModel() {
 
     companion object {
@@ -85,6 +87,21 @@ class LaunchViewModel(
                 Log.d(TAG, "Loaded ${favoriteIds.size} favorites")
             } catch (e: Exception) {
                 Log.e(TAG, "Error loading favorites: ${e.message}", e)
+            }
+        }
+    }
+
+    // Очистка кэша
+    fun clearCache() {
+        viewModelScope.launch {
+            try {
+                Log.d(TAG, "🧹 Clearing cache...")
+                repository.clearCache()
+                // Перезагружаем данные после очистки кэша
+                loadLaunches()
+                Log.d(TAG, "✅ Cache cleared and data reloaded")
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error clearing cache: ${e.message}")
             }
         }
     }

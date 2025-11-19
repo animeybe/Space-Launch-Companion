@@ -6,11 +6,16 @@ import androidx.room.RoomDatabase
 import android.content.Context
 import com.animeybe.spacelaunchcompanion.data.local.dao.LaunchDao
 import com.animeybe.spacelaunchcompanion.data.local.entity.CachedLaunchEntity
+import com.animeybe.spacelaunchcompanion.data.local.entity.CachedLaunchDetailEntity
 import com.animeybe.spacelaunchcompanion.data.local.entity.FavoriteLaunchEntity
 
 @Database(
-    entities = [CachedLaunchEntity::class, FavoriteLaunchEntity::class],
-    version = 1,
+    entities = [
+        CachedLaunchEntity::class,
+        FavoriteLaunchEntity::class,
+        CachedLaunchDetailEntity::class
+    ],
+    version = 2,
     exportSchema = false
 )
 abstract class LaunchDatabase : RoomDatabase() {
@@ -27,7 +32,9 @@ abstract class LaunchDatabase : RoomDatabase() {
                     context.applicationContext,
                     LaunchDatabase::class.java,
                     "launch_database"
-                ).build()
+                )
+                    .addMigrations(MIGRATION_1_2)
+                    .build()
                 INSTANCE = instance
                 instance
             }

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.animeybe.spacelaunchcompanion.data.local.entity.CachedLaunchDetailEntity
 import com.animeybe.spacelaunchcompanion.data.local.entity.CachedLaunchEntity
 import com.animeybe.spacelaunchcompanion.data.local.entity.FavoriteLaunchEntity
 import kotlinx.coroutines.flow.Flow
@@ -38,4 +39,14 @@ interface LaunchDao {
             "INNER JOIN favorite_launches ON cached_launches.id = favorite_launches.launchId " +
             "ORDER BY favorite_launches.addedAt DESC")
     suspend fun getFavoriteLaunches(): List<CachedLaunchEntity>
+
+    // Cached Launch Details
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCachedLaunchDetail(detail: CachedLaunchDetailEntity)
+
+    @Query("SELECT * FROM cached_launch_details WHERE id = :launchId")
+    suspend fun getCachedLaunchDetail(launchId: String): CachedLaunchDetailEntity?
+
+    @Query("DELETE FROM cached_launch_details WHERE cachedAt < :timestamp")
+    suspend fun deleteOldCachedLaunchDetails(timestamp: Long)
 }

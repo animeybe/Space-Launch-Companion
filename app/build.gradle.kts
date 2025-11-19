@@ -101,7 +101,5 @@ dependencies {
 
     testImplementation(libs.kotlinx.coroutines.test)
 
-    // Simple mocking without version conflicts
     testImplementation(libs.mockk)
-
 }

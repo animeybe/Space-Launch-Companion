@@ -58,21 +58,70 @@ class UseCaseTest {
                 id = launchId,
                 name = "Test Launch Detail",
                 status = LaunchStatus("Go", "All systems go"),
-                launchServiceProvider = LaunchServiceProvider(1, "SpaceX", "Commercial", "USA", null, null, null),
-                mission = null,
-                rocket = null,
-                pad = PadDetail(1, "LC-39A", LocationDetail(1, "KSC", "USA", null, null, null, null), null, null),
+                launchServiceProvider = LaunchServiceProvider(
+                    id = 1,
+                    name = "SpaceX",
+                    type = "Commercial",
+                    countryCode = "USA",
+                    description = "Space exploration company",
+                    website = "https://spacex.com",
+                    wikiUrl = null
+                ),
+                mission = MissionDetail(
+                    id = 1,
+                    name = "Test Mission",
+                    description = "Test mission description",
+                    type = "Communication",
+                    orbit = Orbit(1, "LEO", "Low Earth Orbit"),
+                    agencies = emptyList()
+                ),
+                rocket = RocketDetail(
+                    id = 1,
+                    configuration = RocketConfigurationDetail(
+                        id = 1,
+                        name = "Falcon 9",
+                        family = "Falcon",
+                        variant = "Block 5",
+                        fullName = "Falcon 9 Block 5",
+                        description = "Reusable rocket",
+                        launchMass = 549000,
+                        length = 70.0,
+                        diameter = 3.7,
+                        imageUrl = null,
+                        infoUrl = null,
+                        wikiUrl = null
+                    )
+                ),
+                pad = PadDetail(
+                    id = 1,
+                    name = "LC-39A",
+                    location = LocationDetail(
+                        id = 1,
+                        name = "Kennedy Space Center",
+                        countryCode = "USA",
+                        description = "Historic launch complex",
+                        mapImage = null,
+                        totalLaunchCount = 100,
+                        totalLandingCount = 50
+                    ),
+                    mapUrl = null,
+                    totalLaunchCount = 100
+                ),
                 windowStart = "2024-01-01T12:00:00Z",
                 windowEnd = "2024-01-01T14:00:00Z",
                 net = "2024-01-01T12:00:00Z",
-                image = null,
+                image = "https://example.com/image.jpg",
                 infographic = null,
                 program = emptyList(),
-                videoUrls = emptyList(),
+                videoUrls = listOf("https://youtube.com/watch?v=test"),
                 holdReason = null,
                 failReason = null,
-                description = null
+                description = "Test launch description"
             )
+        }
+
+        override suspend fun clearCache() {
+            // Имитация очистки кэша
         }
     }
 
@@ -88,6 +137,24 @@ class UseCaseTest {
         // Then
         assertEquals(3, result.size)
         assertEquals("Zeta Launch", result[0].name)
+        assertEquals("SpaceX", result[0].launchServiceProvider)
+    }
+
+    @Test
+    fun `GetLaunchDetailUseCase returns launch detail`() = runBlocking {
+        // Given
+        val repository = TestLaunchRepository()
+        val useCase = GetLaunchDetailUseCase(repository)
+
+        // When
+        val result = useCase("1")
+
+        // Then
+        assertEquals("1", result.id)
+        assertEquals("Test Launch Detail", result.name)
+        assertEquals("SpaceX", result.launchServiceProvider.name)
+        assertEquals("Falcon 9", result.rocket?.configuration?.name)
+        assertEquals("LC-39A", result.pad.name)
     }
 
     @Test
@@ -178,6 +245,20 @@ class UseCaseTest {
         assertEquals("2024-01-01T12:00:00Z", sorted[0].net)
         assertEquals("2024-01-02T12:00:00Z", sorted[1].net)
         assertEquals("2024-01-03T12:00:00Z", sorted[2].net)
+    }
+
+    @Test
+    fun `repository sorts launches by agency`() = runBlocking {
+        // Given
+        val repository = TestLaunchRepository()
+
+        // When
+        val sorted = repository.getLaunchesSortedBy(SortType.AGENCY)
+
+        // Then
+        assertEquals("NASA", sorted[0].launchServiceProvider)
+        assertEquals("Roscosmos", sorted[1].launchServiceProvider)
+        assertEquals("SpaceX", sorted[2].launchServiceProvider)
     }
 
     private companion object {

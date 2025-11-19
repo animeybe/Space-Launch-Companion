@@ -35,27 +35,32 @@ data class LaunchServiceProviderDto(
 )
 
 data class MissionDto(
+    @SerializedName("id") val id: Int?,
     @SerializedName("name") val name: String,
     @SerializedName("description") val description: String?,
     @SerializedName("type") val type: String?
 )
 
 data class RocketDto(
+    @SerializedName("id") val id: Int?,
     @SerializedName("configuration") val configuration: RocketConfigurationDto
 )
 
 data class RocketConfigurationDto(
+    @SerializedName("id") val id: Int?,
     @SerializedName("name") val name: String,
     @SerializedName("family") val family: String?,
     @SerializedName("variant") val variant: String?
 )
 
 data class PadDto(
+    @SerializedName("id") val id: Int?,
     @SerializedName("name") val name: String,
     @SerializedName("location") val location: LocationDto
 )
 
 data class LocationDto(
+    @SerializedName("id") val id: Int?,
     @SerializedName("name") val name: String,
     @SerializedName("country_code") val countryCode: String
 )

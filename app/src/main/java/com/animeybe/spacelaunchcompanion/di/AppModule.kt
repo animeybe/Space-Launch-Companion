@@ -80,7 +80,8 @@ val appModule = module {
             addToFavoritesUseCase = get(),
             removeFromFavoritesUseCase = get(),
             checkIsFavoriteUseCase = get(),
-            getFavoriteLaunchesUseCase = get()
+            getFavoriteLaunchesUseCase = get(),
+            repository = get() // Добавляем репозиторий
         )
     }
 

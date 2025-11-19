@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Space Launch Companion</string>
+    <string name="clear_cache_description">Очистить кэш и загрузить актуальные данные</string>
+    <string name="clear_cache_title">Очистить кэш</string>
+    <string name="clear_cache_message">Это удалит все сохранённые данные и загрузит актуальные с сервера. Продолжить?</string>
+    <string name="clear_cache_confirm">Очистить</string>
+    <string name="clear_cache_cancel">Отмена</string>
 </resources>

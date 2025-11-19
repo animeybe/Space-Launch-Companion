@@ -47,45 +47,65 @@ class StateLogicTest {
     }
 
     @Test
-    fun `sort type display names`() {
-        // Тестируем логику отображения типов сортировки
-        val sortTypes = SortType.values()
+    fun `sort launches by different criteria`() {
+        // Given
+        val launches = listOf(
+            createLaunch("1", "Charlie", "SpaceX", "2024-01-03T12:00:00Z"),
+            createLaunch("2", "Alpha", "NASA", "2024-01-01T12:00:00Z"),
+            createLaunch("3", "Bravo", "Roscosmos", "2024-01-02T12:00:00Z")
+        )
 
-        assertEquals(SortType.DATE_ASC, sortTypes[0])
-        assertEquals(SortType.DATE_DESC, sortTypes[1])
-        assertEquals(SortType.NAME_ASC, sortTypes[2])
-        assertEquals(SortType.NAME_DESC, sortTypes[3])
-        assertEquals(SortType.AGENCY, sortTypes[4])
-        assertEquals(SortType.COUNTRY, sortTypes[5])
-        assertEquals(SortType.ROCKET, sortTypes[6])
+        // When & Then - сортировка по имени
+        val sortedByName = launches.sortedBy { it.name }
+        assertEquals("Alpha", sortedByName[0].name)
+        assertEquals("Bravo", sortedByName[1].name)
+        assertEquals("Charlie", sortedByName[2].name)
+
+        // When & Then - сортировка по дате
+        val sortedByDate = launches.sortedBy { it.net }
+        assertEquals("2024-01-01T12:00:00Z", sortedByDate[0].net)
+        assertEquals("2024-01-02T12:00:00Z", sortedByDate[1].net)
+        assertEquals("2024-01-03T12:00:00Z", sortedByDate[2].net)
+
+        // When & Then - сортировка по провайдеру
+        val sortedByProvider = launches.sortedBy { it.launchServiceProvider }
+        assertEquals("NASA", sortedByProvider[0].launchServiceProvider)
+        assertEquals("Roscosmos", sortedByProvider[1].launchServiceProvider)
+        assertEquals("SpaceX", sortedByProvider[2].launchServiceProvider)
     }
 
     @Test
     fun `launch status color logic`() {
-        // Имитация логики цветов статусов
+        // Имитация логики цветов статусов (как в UI)
         fun getStatusColor(status: String): String {
             return when (status.uppercase()) {
                 "GO" -> "Green"
                 "TBD" -> "Yellow"
-                "HOLD" -> "Red"
+                "HOLD" -> "Orange"
+                "FAILED" -> "Red"
                 else -> "Gray"
             }
         }
 
         assertEquals("Green", getStatusColor("Go"))
         assertEquals("Yellow", getStatusColor("TBD"))
-        assertEquals("Red", getStatusColor("Hold"))
+        assertEquals("Orange", getStatusColor("Hold"))
+        assertEquals("Red", getStatusColor("Failed"))
         assertEquals("Gray", getStatusColor("Unknown"))
     }
 
     @Test
-    fun `date formatting logic`() {
-        // Имитация логики форматирования даты
+    fun `date formatting logic for display`() {
+        // Имитация логики форматирования даты для UI
         fun formatDisplayDate(isoDate: String): String {
-            return isoDate
-                .replace("T", " ")
-                .replace("Z", "")
-                .substring(0, 16) // "2024-01-01 12:00"
+            return try {
+                // Упрощённая версия форматирования
+                val datePart = isoDate.substring(0, 10) // "2024-01-01"
+                val timePart = isoDate.substring(11, 16) // "12:00"
+                "$datePart $timePart"
+            } catch (e: Exception) {
+                isoDate
+            }
         }
 
         val input = "2024-01-01T12:00:00Z"
@@ -94,34 +114,57 @@ class StateLogicTest {
     }
 
     @Test
-    fun `mission display logic`() {
-        // Имитация логики отображения миссии
-        val launchWithMission = createLaunch("1", "Test").copy(
-            mission = Mission("Science Mission", "Study climate change", "Science")
+    fun `mission and rocket display logic`() {
+        // Тестируем логику отображения миссии и ракеты
+        val launchWithDetails = createLaunch("1", "Detailed Launch").copy(
+            mission = Mission("Science Mission", "Study climate change", "Science"),
+            rocket = Rocket(RocketConfiguration("Falcon 9", "Falcon", "Block 5"))
         )
 
-        val launchWithoutMission = createLaunch("2", "Test2")
+        val launchWithoutDetails = createLaunch("2", "Simple Launch")
 
-        // Проверяем наличие миссии
-        assertNotNull(launchWithMission.mission)
-        assertNull(launchWithoutMission.mission)
+        // Проверяем наличие деталей
+        assertNotNull(launchWithDetails.mission)
+        assertNotNull(launchWithDetails.rocket)
+        assertNull(launchWithoutDetails.mission)
+        assertNull(launchWithoutDetails.rocket)
 
-        // Проверяем данные миссии
-        assertEquals("Science Mission", launchWithMission.mission?.name)
-        assertEquals("Study climate change", launchWithMission.mission?.description)
-        assertEquals("Science", launchWithMission.mission?.type)
+        // Проверяем данные
+        assertEquals("Science Mission", launchWithDetails.mission?.name)
+        assertEquals("Falcon 9", launchWithDetails.rocket?.configuration?.name)
     }
 
-    private fun createLaunch(id: String, name: String): Launch {
+    @Test
+    fun `country code to name conversion`() {
+        // Имитация конвертации кодов стран в названия
+        fun getCountryName(countryCode: String): String {
+            return when (countryCode.uppercase()) {
+                "USA" -> "США"
+                "RUS" -> "Россия"
+                "CHN" -> "Китай"
+                "EU" -> "Европейский союз"
+                "FRA" -> "Франция"
+                "JPN" -> "Япония"
+                else -> countryCode
+            }
+        }
+
+        assertEquals("США", getCountryName("USA"))
+        assertEquals("Россия", getCountryName("RUS"))
+        assertEquals("Китай", getCountryName("CHN"))
+        assertEquals("UNK", getCountryName("UNK"))
+    }
+
+    private fun createLaunch(id: String, name: String, provider: String = "Test Provider", net: String = "2024-01-01T12:00:00Z"): Launch {
         return Launch(
             id = id,
             name = name,
             status = LaunchStatus("Go", null),
-            launchServiceProvider = "Test Provider",
+            launchServiceProvider = provider,
             mission = null,
             rocket = null,
             pad = Pad("Test Pad", Location("Test Location", "Test Country")),
-            net = "2024-01-01T12:00:00Z",
+            net = net,
             image = null
         )
     }

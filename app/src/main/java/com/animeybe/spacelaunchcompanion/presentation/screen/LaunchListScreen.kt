@@ -9,17 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.animeybe.spacelaunchcompanion.data.util.NetworkMonitor
+import com.animeybe.spacelaunchcompanion.presentation.components.ClearCacheButton
+import com.animeybe.spacelaunchcompanion.presentation.components.ClearCacheDialog
 import com.animeybe.spacelaunchcompanion.presentation.components.ErrorState
 import com.animeybe.spacelaunchcompanion.presentation.components.LaunchItem
 import com.animeybe.spacelaunchcompanion.presentation.components.LoadingIndicator
@@ -40,6 +51,7 @@ fun LaunchListScreen(
     val launchState by viewModel.launchState.collectAsState()
     val sortState by viewModel.sortState.collectAsState()
     val isOnline by networkMonitor.isOnline.collectAsState(initial = true)
+    var showClearCacheDialog by remember { mutableStateOf(false) }
 
     // Показываем диалог сортировки если нужно
     if (sortState.isSortDialogVisible) {
@@ -50,13 +62,32 @@ fun LaunchListScreen(
         )
     }
 
+    // Диалог очистки кэша
+    if (showClearCacheDialog) {
+        ClearCacheDialog(
+            onConfirm = {
+                viewModel.clearCache()
+                showClearCacheDialog = false
+            },
+            onDismiss = { showClearCacheDialog = false }
+        )
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            SortButton(
-                onClick = viewModel::showSortDialog,
-                sortType = sortState.currentSort
-            )
+            Column {
+                // Кнопка очистки кэша
+                ClearCacheButton(
+                    onClick = { showClearCacheDialog = true },
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                // Существующая кнопка сортировки
+                SortButton(
+                    onClick = viewModel::showSortDialog,
+                    sortType = sortState.currentSort
+                )
+            }
         }
     ) { innerPadding ->
         Column(

@@ -57,24 +57,26 @@
 
 ### Слои приложения
 
+```text
 app/
 ├── data/
-│ ├── local/ # Room entities, DAO, database
-│ ├── mapper/ # Data mapping between layers
-│ ├── remote/ # Retrofit services, DTO models
-│ └── repository/ # Repository implementations
+│ ├── local/
+│ ├── mapper/
+│ ├── remote/
+│ └── repository/
 ├── domain/
-│ ├── model/ # Domain models
-│ ├── repository/ # Repository interfaces
-│ └── usecase/ # Business logic use cases
-├── di/ # Dependency injection modules
+│ ├── model/
+│ ├── repository/
+│ └── usecase/
+├── di/
 ├── presentation/
-│ ├── components/ # Reusable UI components
-│ ├── navigation/ # App navigation
-│ ├── screen/ # Composable screens
-│ ├── state/ # UI state classes
-│ └── viewmodel/ # ViewModels
-└── ui.theme/ # Color, Typography, Theme
+│ ├── components/
+│ ├── navigation/
+│ ├── screen/
+│ ├── state/
+│ └── viewmodel/
+└── ui.theme/
+```
 
 ### Описание слоев
 

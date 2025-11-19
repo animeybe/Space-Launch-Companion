@@ -20,6 +20,9 @@ interface LaunchRepository {
 
     // Детальная информация
     suspend fun getLaunchDetail(launchId: String): LaunchDetail
+
+    // Очистка кэша
+    suspend fun clearCache()
 }
 
 enum class SortType {

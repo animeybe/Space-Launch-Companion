@@ -24,7 +24,7 @@ object LaunchDetailMapper {
             image = dto.image,
             infographic = dto.infographic,
             program = dto.program?.map { mapProgram(it) },
-            videoUrls = dto.videoUrls,
+            videoUrls = dto.videoUrls?.mapNotNull { it.url },
             holdReason = dto.holdReason,
             failReason = dto.failReason,
             description = dto.description

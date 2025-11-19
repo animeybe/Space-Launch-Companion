@@ -16,10 +16,10 @@ data class LaunchDetailDto(
     @SerializedName("image") val image: String?,
     @SerializedName("infographic") val infographic: String?,
     @SerializedName("program") val program: List<ProgramDto>?,
-    @SerializedName("vidURLs") val videoUrls: List<String>?,
+    @SerializedName("vidURLs") val videoUrls: List<VideoUrlDto>?,
     @SerializedName("holdreason") val holdReason: String?,
     @SerializedName("failreason") val failReason: String?,
-    @SerializedName("mission_description") val description: String?
+    @SerializedName("description") val description: String?
 )
 
 data class MissionDetailDto(
@@ -104,5 +104,11 @@ data class LauncherConfigDto(
     @SerializedName("family") val family: String?,
     @SerializedName("variant") val variant: String?,
     @SerializedName("full_name") val fullName: String?,
+    @SerializedName("description") val description: String?
+)
+
+data class VideoUrlDto(
+    @SerializedName("url") val url: String?,
+    @SerializedName("title") val title: String?,
     @SerializedName("description") val description: String?
 )
