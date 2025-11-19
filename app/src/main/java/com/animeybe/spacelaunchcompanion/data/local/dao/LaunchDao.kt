@@ -7,7 +7,6 @@ import androidx.room.Query
 import com.animeybe.spacelaunchcompanion.data.local.entity.CachedLaunchDetailEntity
 import com.animeybe.spacelaunchcompanion.data.local.entity.CachedLaunchEntity
 import com.animeybe.spacelaunchcompanion.data.local.entity.FavoriteLaunchEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface LaunchDao {

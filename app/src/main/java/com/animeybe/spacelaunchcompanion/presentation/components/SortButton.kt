@@ -14,7 +14,7 @@ import com.animeybe.spacelaunchcompanion.presentation.state.SortType
 @Composable
 fun SortButton(
     onClick: () -> Unit,
-    sortType: SortType, // Добавляем текущий тип сортировки
+    sortType: SortType,
     modifier: Modifier = Modifier
 ) {
     FloatingActionButton(

@@ -1,6 +1,5 @@
 package com.animeybe.spacelaunchcompanion.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.animeybe.spacelaunchcompanion.domain.repository.LaunchRepository
@@ -19,12 +18,8 @@ class LaunchViewModel(
     private val removeFromFavoritesUseCase: RemoveFromFavoritesUseCase,
     private val checkIsFavoriteUseCase: CheckIsFavoriteUseCase,
     private val getFavoriteLaunchesUseCase: GetFavoriteLaunchesUseCase,
-    private val repository: LaunchRepository // Добавляем репозиторий для очистки кэша
+    private val repository: LaunchRepository
 ) : ViewModel() {
-
-    companion object {
-        private const val TAG = "LaunchViewModel"
-    }
 
     // Основное состояние
     private val _launchState = MutableStateFlow<LaunchState>(LaunchState.Loading)
@@ -41,32 +36,23 @@ class LaunchViewModel(
     private var cachedLaunches: List<com.animeybe.spacelaunchcompanion.domain.model.Launch> = emptyList()
 
     init {
-        Log.d(TAG, "ViewModel initialized")
         loadLaunches()
         loadFavorites()
     }
 
     fun loadLaunches() {
         viewModelScope.launch {
-            Log.d(TAG, "Loading launches...")
             _launchState.value = LaunchState.Loading
             try {
                 val launches = getUpcomingLaunchesUseCase()
-                Log.d(TAG, "Successfully loaded ${launches.size} launches")
-
-                // Сохраняем в кэш для сортировки
                 cachedLaunches = launches
-
-                // Применяем текущую сортировку
                 val sortedLaunches = applySorting(launches, _sortState.value.currentSort)
 
-                // Обновляем состояние с учетом избранного
                 _launchState.value = LaunchState.Success(
                     launches = sortedLaunches,
                     favorites = _favorites.value
                 )
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading launches: ${e.message}", e)
                 val userFriendlyMessage = when {
                     e is java.net.UnknownHostException -> "Проверьте подключение к интернету"
                     e is java.net.SocketTimeoutException -> "Сервер не отвечает"
@@ -84,10 +70,7 @@ class LaunchViewModel(
                 val favoriteLaunches = getFavoriteLaunchesUseCase()
                 val favoriteIds = favoriteLaunches.map { it.id }.toSet()
                 _favorites.value = favoriteIds
-                Log.d(TAG, "Loaded ${favoriteIds.size} favorites")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error loading favorites: ${e.message}", e)
-            }
+            } catch (e: Exception) { throw e }
         }
     }
 
@@ -95,14 +78,9 @@ class LaunchViewModel(
     fun clearCache() {
         viewModelScope.launch {
             try {
-                Log.d(TAG, "🧹 Clearing cache...")
                 repository.clearCache()
-                // Перезагружаем данные после очистки кэша
                 loadLaunches()
-                Log.d(TAG, "✅ Cache cleared and data reloaded")
-            } catch (e: Exception) {
-                Log.e(TAG, "❌ Error clearing cache: ${e.message}")
-            }
+            } catch (e: Exception) { throw e }
         }
     }
 
@@ -115,19 +93,12 @@ class LaunchViewModel(
                 if (isCurrentlyFavorite) {
                     removeFromFavoritesUseCase(launchId)
                     _favorites.value = _favorites.value - launchId
-                    Log.d(TAG, "Removed $launchId from favorites")
                 } else {
                     addToFavoritesUseCase(launchId)
                     _favorites.value = _favorites.value + launchId
-                    Log.d(TAG, "Added $launchId to favorites")
                 }
-
-                // Обновляем UI состояние
                 updateSuccessStateWithFavorites()
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Error toggling favorite: ${e.message}", e)
-            }
+            } catch (e: Exception) { throw e }
         }
     }
 
@@ -140,23 +111,18 @@ class LaunchViewModel(
 
     // Сортировка
     fun showSortDialog() {
-        Log.d(TAG, "Showing sort dialog")
         _sortState.value = _sortState.value.copy(isSortDialogVisible = true)
     }
 
     fun hideSortDialog() {
-        Log.d(TAG, "Hiding sort dialog")
         _sortState.value = _sortState.value.copy(isSortDialogVisible = false)
     }
 
     fun setSortType(sortType: SortType) {
-        Log.d(TAG, "Setting sort type: $sortType")
         _sortState.value = _sortState.value.copy(
             currentSort = sortType,
             isSortDialogVisible = false
         )
-
-        // Применяем сортировку к данным
         applyCurrentSorting()
     }
 
@@ -165,7 +131,6 @@ class LaunchViewModel(
         if (currentState is LaunchState.Success) {
             val sortedLaunches = applySorting(cachedLaunches, _sortState.value.currentSort)
             _launchState.value = currentState.copy(launches = sortedLaunches)
-            Log.d(TAG, "Applied ${_sortState.value.currentSort} sorting to ${sortedLaunches.size} launches")
         }
     }
 

@@ -9,6 +9,7 @@ import retrofit2.http.Path
 // API The Space Devs имеет лимиты на количество запросов:
 // Бесплатный план: ~15 запросов в час
 // При превышении лимита - блокировка на 15-20 минут
+
 interface SpaceDevsApiService {
     @GET("launch/upcoming/")
     suspend fun getUpcomingLaunches(): LaunchesResponseDto

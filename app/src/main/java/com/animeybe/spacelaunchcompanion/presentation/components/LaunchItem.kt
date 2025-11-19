@@ -35,7 +35,6 @@ fun LaunchItem(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Заголовок с изображением и кнопкой избранного
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
@@ -134,7 +133,7 @@ private fun formatLaunchDate(dateString: String): String {
         val outputFormat = SimpleDateFormat("dd MMM yyyy 'в' HH:mm", Locale.getDefault())
         val date = inputFormat.parse(dateString)
         outputFormat.format(date!!)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         dateString
     }
 }

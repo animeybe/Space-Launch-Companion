@@ -1,6 +1,5 @@
 package com.animeybe.spacelaunchcompanion.di
 
-import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import com.animeybe.spacelaunchcompanion.data.local.database.LaunchDatabase
 import com.animeybe.spacelaunchcompanion.data.local.dao.LaunchDao
@@ -61,11 +60,9 @@ val appModule = module {
 
     // ==================== USE CASES ====================
 
-    // Основные Use Cases
     single { GetUpcomingLaunchesUseCase(repository = get()) }
     single { GetLaunchDetailUseCase(repository = get()) }
 
-    // Use Cases для работы с избранным
     single { AddToFavoritesUseCase(repository = get()) }
     single { RemoveFromFavoritesUseCase(repository = get()) }
     single { CheckIsFavoriteUseCase(repository = get()) }
@@ -73,7 +70,6 @@ val appModule = module {
 
     // ==================== VIEWMODELS ====================
 
-    // ViewModel для главного экрана
     viewModel {
         LaunchViewModel(
             getUpcomingLaunchesUseCase = get(),
@@ -81,11 +77,10 @@ val appModule = module {
             removeFromFavoritesUseCase = get(),
             checkIsFavoriteUseCase = get(),
             getFavoriteLaunchesUseCase = get(),
-            repository = get() // Добавляем репозиторий
+            repository = get()
         )
     }
 
-    // ViewModel для экрана деталей
     viewModel { (savedStateHandle: SavedStateHandle) ->
         LaunchDetailViewModel(
             getLaunchDetailUseCase = get(),

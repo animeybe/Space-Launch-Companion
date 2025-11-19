@@ -7,13 +7,13 @@ data class Launch(
     val launchServiceProvider: String,
     val mission: Mission?,
     val rocket: Rocket?,
-    val pad: Pad, // Стартовая площадка
-    val net: String, // Дата и время запуска
+    val pad: Pad,
+    val net: String,
     val image: String?
 )
 
 data class LaunchStatus(
-    val name: String, // "Go", "TBD" и т.д.
+    val name: String,
     val description: String?
 )
 

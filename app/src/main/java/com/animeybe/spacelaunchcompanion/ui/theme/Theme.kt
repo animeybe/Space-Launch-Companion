@@ -5,7 +5,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import com.animeybe.spacelaunchcompanion.ui.theme.favoirte_button_color_light
 
 private val DarkColorScheme = darkColorScheme(
     background = background_color_night,

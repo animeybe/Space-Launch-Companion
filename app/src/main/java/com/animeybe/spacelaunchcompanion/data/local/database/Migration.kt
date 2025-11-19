@@ -4,9 +4,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(database: SupportSQLiteDatabase) {
-        // Создаем таблицу для кэширования деталей запуска
-        database.execSQL("""
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("""
             CREATE TABLE IF NOT EXISTS `cached_launch_details` (
                 `id` TEXT NOT NULL, 
                 `name` TEXT NOT NULL, 

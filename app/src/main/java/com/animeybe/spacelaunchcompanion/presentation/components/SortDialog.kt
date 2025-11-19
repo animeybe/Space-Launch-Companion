@@ -18,8 +18,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.unit.dp
 import com.animeybe.spacelaunchcompanion.presentation.state.SortType
 
@@ -40,7 +38,7 @@ fun SortDialog(
         },
         text = {
             LazyColumn {
-                items(SortType.values()) { sortType ->
+                items(SortType.entries.toTypedArray()) { sortType ->
                     SortOptionItem(
                         sortType = sortType,
                         isSelected = currentSort == sortType,

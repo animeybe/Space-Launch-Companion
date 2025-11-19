@@ -1,6 +1,5 @@
 package com.animeybe.spacelaunchcompanion.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,10 +24,6 @@ class LaunchDetailViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    companion object {
-        private const val TAG = "LaunchDetailViewModel"
-    }
-
     private val launchId: String = savedStateHandle.get<String>("launchId") ?: ""
 
     private val _launchDetailState = MutableStateFlow<LaunchDetailState>(LaunchDetailState.Loading)
@@ -38,7 +33,6 @@ class LaunchDetailViewModel(
     val isFavorite: StateFlow<Boolean> = _isFavorite
 
     init {
-        Log.d(TAG, "LaunchDetailViewModel initialized for launchId: $launchId")
         if (launchId.isNotEmpty()) {
             loadLaunchDetail()
             checkFavoriteStatus()
@@ -49,33 +43,26 @@ class LaunchDetailViewModel(
 
     private fun loadLaunchDetail() {
         viewModelScope.launch {
-            Log.d(TAG, "Loading launch detail...")
             _launchDetailState.value = LaunchDetailState.Loading
             try {
                 val launchDetail = getLaunchDetailUseCase(launchId)
-                Log.d(TAG, "Successfully loaded launch detail: ${launchDetail.name}")
                 _launchDetailState.value = LaunchDetailState.Success(launchDetail)
 
             } catch (e: RateLimitException) {
                 val minutes = e.retryAfterSeconds / 60
                 val message = "${e.message} Лимит восстановится через $minutes минут."
-                Log.e(TAG, "Rate limit: ${e.message}")
                 _launchDetailState.value = LaunchDetailState.Error(message)
 
             } catch (e: NotFoundException) {
-                Log.e(TAG, "Launch not found: ${e.message}")
                 _launchDetailState.value = LaunchDetailState.Error(e.message ?: "Запуск не найден")
 
             } catch (e: ApiException) {
-                Log.e(TAG, "API error: ${e.message}")
                 _launchDetailState.value = LaunchDetailState.Error(e.message ?: "Ошибка API")
 
-            } catch (e: UnknownHostException) {
-                Log.e(TAG, "No internet: ${e.message}")
+            } catch (_: UnknownHostException) {
                 _launchDetailState.value = LaunchDetailState.Error("Нет подключения к интернету")
 
             } catch (e: Exception) {
-                Log.e(TAG, "Error loading launch detail: ${e.message}", e)
                 val userFriendlyMessage = when {
                     e is java.net.SocketTimeoutException -> "Сервер не отвечает"
                     e.message?.contains("404") == true -> "Запуск не найден"
@@ -91,10 +78,7 @@ class LaunchDetailViewModel(
             try {
                 val isCurrentlyFavorite = checkIsFavoriteUseCase(launchId)
                 _isFavorite.value = isCurrentlyFavorite
-                Log.d(TAG, "Favorite status for $launchId: $isCurrentlyFavorite")
-            } catch (e: Exception) {
-                Log.e(TAG, "Error checking favorite status: ${e.message}", e)
-            }
+            } catch (e: Exception) { throw e }
         }
     }
 
@@ -106,15 +90,11 @@ class LaunchDetailViewModel(
                 if (currentlyFavorite) {
                     removeFromFavoritesUseCase(launchId)
                     _isFavorite.value = false
-                    Log.d(TAG, "Removed $launchId from favorites")
                 } else {
                     addToFavoritesUseCase(launchId)
                     _isFavorite.value = true
-                    Log.d(TAG, "Added $launchId to favorites")
                 }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error toggling favorite: ${e.message}", e)
-            }
+            } catch (e: Exception) { throw e }
         }
     }
 

@@ -9,14 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,7 +47,6 @@ fun LaunchListScreen(
     val isOnline by networkMonitor.isOnline.collectAsState(initial = true)
     var showClearCacheDialog by remember { mutableStateOf(false) }
 
-    // Показываем диалог сортировки если нужно
     if (sortState.isSortDialogVisible) {
         SortDialog(
             currentSort = sortState.currentSort,
@@ -62,7 +55,6 @@ fun LaunchListScreen(
         )
     }
 
-    // Диалог очистки кэша
     if (showClearCacheDialog) {
         ClearCacheDialog(
             onConfirm = {
@@ -77,12 +69,10 @@ fun LaunchListScreen(
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             Column {
-                // Кнопка очистки кэша
                 ClearCacheButton(
                     onClick = { showClearCacheDialog = true },
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                // Существующая кнопка сортировки
                 SortButton(
                     onClick = viewModel::showSortDialog,
                     sortType = sortState.currentSort
@@ -96,7 +86,6 @@ fun LaunchListScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Показываем индикатор сети
             NetworkStatusIndicator(
                 isOnline = isOnline,
                 modifier = Modifier.fillMaxWidth()
@@ -107,7 +96,6 @@ fun LaunchListScreen(
                 launchState = launchState,
                 onRetry = viewModel::loadLaunches,
                 onToggleFavorite = viewModel::toggleFavorite,
-                isFavorite = viewModel::isFavorite,
                 onLaunchClick = onLaunchClick,
                 modifier = Modifier.weight(1f)
             )
@@ -138,7 +126,6 @@ fun MainContent(
     launchState: LaunchState,
     onRetry: () -> Unit,
     onToggleFavorite: (String) -> Unit,
-    isFavorite: (String) -> Boolean,
     onLaunchClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -148,7 +135,6 @@ fun MainContent(
             launches = launchState.launches,
             favorites = launchState.favorites,
             onToggleFavorite = onToggleFavorite,
-            isFavorite = isFavorite,
             onLaunchClick = onLaunchClick
         )
         is LaunchState.Error -> ErrorState(
@@ -164,7 +150,6 @@ fun LaunchList(
     launches: List<com.animeybe.spacelaunchcompanion.domain.model.Launch>,
     favorites: Set<String>,
     onToggleFavorite: (String) -> Unit,
-    isFavorite: (String) -> Boolean,
     onLaunchClick: (String) -> Unit
 ) {
     if (launches.isEmpty()) {
